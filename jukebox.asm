@@ -1,16 +1,17 @@
 ; DELAY constants
-.EQU INNER_LOOP = 0xFF
-.EQU MIDDLE_LOOP = 0xFF
+.EQU 	INNER_LOOP = 0xFF
+.EQU 	MIDDLE_LOOP = 0xFF
 
 ; PORT Definitions
-.EQU SPEAKER_PORT = 0x69
+.EQU 	SPEAKER_PORT = 0x69
+.EQU 	LOWER_SWITCHES = 0x21
 
 ; NOTE Defintions
-.EQU	SIXTEENTH = 0X01
-.EQU	EIGHTH = 0X02
-.EQU	QUARTER = 0X04
-.EQU 	HALF = 0X08
-.EQU 	WHOLE = 0X10
+.EQU	SIXT 	= 0X01
+.EQU	EIGHTH 	= 0X02
+.EQU	QUARTER	= 0X04
+.EQU 	HALF 	= 0X08
+.EQU 	WHOLE 	= 0X10
 
 .EQU	REST 	= 0
 .EQU	LOC  	= 1
@@ -51,7 +52,7 @@
 .EQU	HIB 	= 36
 
 
-main: 		IN 		R6, LOWER_BUTTONS 	; Read song number from buttons
+main: 		IN 		R6, LOWER_SWITCHES 	; Read song number from switches
 		CALL 		R6 			; Branch to correct song number
 		BRN 		main
 
@@ -59,13 +60,13 @@ main: 		IN 		R6, LOWER_BUTTONS 	; Read song number from buttons
 
 ;The White Stripes  Seven Nation Army  126 BPM
 
-1:
+1: 		MOV 		R, 23
 Seven_NA:	MOV		R4, MIDE	
-		MOV		R31, SIXTEENTH
+		MOV		R31, SIXT
 		CALL 		play_note
-		MOV		R31, SIXTEENTH
+		MOV		R31, SIXT
 		CALL 		play_note
-		MOV		R31, SIXTEENTH
+		MOV		R31, SIXT
 		CALL 		play_note
 		CALL 		play_note
 		MOV		R4, MIDE	
@@ -75,7 +76,7 @@ Seven_NA:	MOV		R4, MIDE
 		MOV		R31, EIGHTH
 		CALL 		play_note
 		MOV		R4, MIDE	
-		MOV		R31, SIXTEENTH
+		MOV		R31, SIXT
 		CALL 		play_note
 		MOV		R4, REST	
 		MOV		R31, EIGHTH
@@ -100,32 +101,38 @@ Seven_NA:	MOV		R4, MIDE
 ; 	- R4: Note to be played
 ; Affected:
 ; 	- R1, R2, R3 (in delay subroutine)
-play_note: 	OUT R4, SPEAKER_PORT
-		CALL 	delay
+play_note: 	OUT 		R4, SPEAKER_PORT
+		CALL 		delay
 		RET
 
 
 ; Delay subroutine
 ; Descr: Delays for time specified by R31
 ; 	- R31 = 0x0E => 0.0734s delay
-; 	- R31 = 0x60 => 0.503 delay
+; 	- R31 = 0x60 => 0.503s delay
+; 	- R31 = 23   => 0.120s delay => 126 bpm
 ; Parameters:
-; 	- R31: outer for loop count
+; 	- R31: outer for-loop count
+; 	- R30: base for-loop count
 ; Affected:
 ; 	- R1, R2, R3
 ; TODO:
 ; 	- Add another loop so delay will last note length
 ; 	- Make subroutine to calculate length of 1/16 note, then make base delay be equal to that time
 
-delay: 		MOV R1, R31  ;set outside for loop count
-outside_one: 	SUB R1, 0x01
-              	MOV R2, MIDDLE_LOOP	 ;set middle for loop count
-middle_one:   	SUB R2, 0x01
-              	MOV R3, INNER_LOOP 	 ;set inside for loop count
-inside_one:   	SUB R3, 0x01
-		BRNE inside_one
-              	OR R2, 0x00           ;load flags for middle for counter
-              	BRNE middle_one
-              	OR R1, 0x00           ;load flags for outsde for counter value
-              	BRNE outside_one		
+delay: 		MOV 		R1, R30  ;set base for loop count
+outside_one: 	SUB 		R1, 0x01
+              	MOV 		R2, MIDDLE_LOOP	;set middle for loop count
+middle_one:   	SUB 		R2, 0x01
+              	MOV 		R3, INNER_LOOP 	;set inside for loop count
+inside_one:   	SUB 		R3, 0x01
+		BRNE 		inside_one
+              	OR 		R2, 0x00 		;load flags for middle for counter
+              	BRNE 		middle_one
+              	OR 		R1, 0x00           	;load flags for outsde for counter value
+              	BRNE 		outside_one	; end of base delay loop	
+				       	
+		SUB 		R31, 0x01 	      	 
+		BRNE 		delay 		; repeat the base delay loop R31 times
+		
 	      	RET
