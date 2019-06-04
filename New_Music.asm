@@ -1,7 +1,7 @@
 ; BPM constants
-.EQU 		BPM_126 = 23
-.EQU 		BPM_106 = 27
-.EQU 		BPM_78 = 37
+.EQU 		BPM_126 = 11
+.EQU 		BPM_106 = 13
+.EQU 		BPM_78 = 18
 
 ; DELAY constants
 .EQU 	 	INNER_LOOP = 0xFF
@@ -11,12 +11,15 @@
 .EQU 	 	SPEAKER_PORT = 0x69
 .EQU 	 	LOWER_SWITCHES = 0x21
 
-; NOTE Defintions
-.EQU 		SIXT 	= 0X01
-.EQU 		EIGHTH 	= 0X02
-.EQU 		QUARTER	= 0X04
-.EQU 	 	HALF 	= 0X08
-.EQU 	 	WHOLE 	= 0X10
+; NOTE Defintions
+
+.EQU		THIRS	= 0x01
+
+.EQU 		SIXT 	= 0X02
+.EQU 		EIGHTH 	= 0X04
+.EQU 		QUARTER	= 0X08
+.EQU 	 	HALF 	= 0X10
+.EQU 	 	WHOLE 	= 0X20
 
 .EQU 		REST 	= 0
 .EQU 		LOC  	= 1
@@ -72,7 +75,11 @@ main: 		IN 		R5, LOWER_SWITCHES 	; Read song number from switches
 			CMP		R5, 3
 			BREQ	Power
 			CMP		R5, 4
-			BREQ Imp_March
+			BREQ Imp_March
+			
+			MOV		R4, REST
+			
+			OUT		R4, SPEAKER_PORT
 		;CALL 		Seven_NA 		; Will be replaced with conditional branches to select correct song 
 			BRN 		main 			; Repeat indefinitely
 
@@ -241,11 +248,11 @@ Real_Slim:	MOV 		R30, BPM_106 		; Sets base loop to .12s => 126bpm
 			CALL 		play_note
 		
 			MOV		R4, MIDGS	
-			MOV		R31, SIXT 	;32nd note 	
+			MOV		R31, THIRS 	;32nd note 	
 			CALL 		play_note
 	
 			MOV		R4, MIDG	
-			MOV		R31, SIXT 	;32nd note 	
+			MOV		R31, THIRS 	;32nd note 	
 			CALL 		play_note
 	
 			MOV		R4, MIDF
@@ -414,6 +421,13 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 
 			MOV		R4, LOG		
 			MOV		R31, HALF 
+			CALL 		play_note
+			
+			
+			MOV		R4, REST	
+
+			MOV		R31, SIXT 
+
 			CALL 		play_note
 
 			ADD		R10, 1
@@ -478,19 +492,19 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 			MOV		R31, EIGHTH 
 			CALL 		play_note
 		
-			MOV		R4, LOCS		
+			MOV		R4, MIDCS		
 			MOV		R31, QUARTER 
 			CALL 		play_note
 		
-			MOV		R4, LOC	
+			MOV		R4, MIDC	
 			MOV		R31, EIGHTH 
 			CALL 		play_note
-			MOV		R4, LOC		
+			MOV		R4, MIDC		
 			MOV		R31, QUARTER 
 			CALL 		play_note
 		
 			MOV		R4, LOB		
-			MOV		R31, SIXT				;;;;MAYBE A MESS UP 
+			MOV		R31, SIXT 
 			CALL 		play_note
 
 ;;;;;;;;;;;;;;;;;4th stanza;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -605,14 +619,14 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 			MOV		R31, EIGHTH 
 			CALL 		play_note
 		
-			MOV		R4, LOCS		
+			MOV		R4, MIDCS		
 			MOV		R31, QUARTER 
 			CALL 		play_note
 		
-			MOV		R4, LOC	
+			MOV		R4, MIDC	
 			MOV		R31, EIGHTH 
 			CALL 		play_note
-			MOV		R4, LOC		
+			MOV		R4, MIDC		
 			MOV		R31, QUARTER 
 			CALL 		play_note
 		
@@ -676,7 +690,13 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 		
 			MOV		R4, LOG		
 			MOV		R31, HALF 
-			CALL 		play_note	
+			CALL 		play_note	
+
+			MOV		R4, REST	
+
+			MOV		R31, HALF 
+
+			CALL 		play_note
 		
 			RET
 
@@ -721,15 +741,15 @@ inside_one:   	SUB 		R3, 0x01
 		
       	RET
 
-ISR:
-IN R17, BUTTONS
-CMP BUTTONS, 0x01
-BREQ RESUME
-BRN ISR
-RESUME:
-RETIE
+;ISR:
+;IN R17, BUTTONS
+;CMP BUTTONS, 0x01
+;BREQ RESUME
+;BRN ISR
+;RESUME:
+;RETIE
 
 
-.CSEG
-.ORG 0x3FF
-BRN ISR
+;.CSEG
+;.ORG 0x3FF
+;BRN ISR
