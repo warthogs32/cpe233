@@ -717,4 +717,17 @@ inside_one:   	SUB 		R3, 0x01
 		SUB 		R31, 0x01 	      	 
 		BRNE 		delay 		; repeat the base delay loop R31 times
 		
-	      	RET
+      	RET
+
+ISR:
+IN R17, BUTTONS
+CMP BUTTONS, 0x01
+BREQ RESUME
+BRN ISR
+RESUME:
+RETIE
+
+
+.CSEG
+.ORG 0x3FF
+BRN ISR
