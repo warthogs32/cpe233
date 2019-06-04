@@ -181,10 +181,7 @@ Seven_NA:	MOV 		R30, BPM_126 		; Sets base loop to .12s => 126bpm
 		CALL 		play_note
 		
 		MOV		R4, LOB	
-		MOV		R31, EIGHTH
-		CALL 		play_note
-		MOV		R4, LOB	
-		MOV		R31, SIXT
+		MOV		R31, HALF
 		CALL 		play_note
 		
 		MOV		R4, REST	
