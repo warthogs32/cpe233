@@ -183,7 +183,7 @@ Seven_NA:	MOV 		R30, BPM_126 		; Sets base loop to .12s => 126bpm
 		MOV		R4, LOB	
 		MOV		R31, EIGHTH
 		CALL 		play_note
-		MOV		R4, MIDFS	
+		MOV		R4, LOB	
 		MOV		R31, SIXT
 		CALL 		play_note
 		
@@ -195,7 +195,7 @@ Seven_NA:	MOV 		R30, BPM_126 		; Sets base loop to .12s => 126bpm
 		MOV		R31, SIXT
 		CALL 		play_note
 		
-		RET
+		BRN main
 
 			
 ;Eminem – The Real Slim Shady – 105 BPM	
@@ -267,7 +267,7 @@ Real_Slim:	MOV 		R30, BPM_106 		; Sets base loop to .12s => 126bpm
 			MOV		R31, EIGHTH 	
 			CALL 		play_note
 			
-			RET
+			BRN main
 
 
 ;Kanye West – POWER – 78 BPM
@@ -365,7 +365,7 @@ P_loop:			MOV		R4, LOAS		; Choose note
 			MOV		R31, SIXT	
 			CALL 		play_note
 		
-			RET	
+			BRN main	
 
 
 ;John Williams - The Imperial March - 104 BPM
@@ -500,7 +500,7 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 			MOV		R31, EIGHTH 
 			CALL 		play_note
 			MOV		R4, MIDC		
-			MOV		R31, QUARTER 
+			MOV		R31, SIXT 
 			CALL 		play_note
 		
 			MOV		R4, LOB		
@@ -627,7 +627,7 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 			MOV		R31, EIGHTH 
 			CALL 		play_note
 			MOV		R4, MIDC		
-			MOV		R31, QUARTER 
+			MOV		R31, SIXT 
 			CALL 		play_note
 		
 			MOV		R4, LOB		
@@ -698,7 +698,7 @@ Imp_Loop:	MOV		R4, LOG		; Choose note
 
 			CALL 		play_note
 		
-			RET
+			BRN main
 
 ; Play Note Subroutine
 ; Descr: Outputs note to Speaker port, calls delay subroutine for proper time
