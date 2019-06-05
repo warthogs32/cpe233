@@ -2,7 +2,7 @@
 .EQU 		BPM_126 = 11
 .EQU 		BPM_106 = 13
 .EQU 		BPM_78 = 18
-.EQU		BPM_63 = 23
+.EQU		BPM_63 = 20
 ; DELAY constants
 .EQU 	 	INNER_LOOP = 0xFF
 .EQU 	 	MIDDLE_LOOP = 0xFF
